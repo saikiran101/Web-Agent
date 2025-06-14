@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Qwen2.5-VL AI Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1e40af",
+                        secondary: "#f1f5f9"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-secondary text-gray-800 min-h-screen flex items-center justify-center p-6">
+
+    <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-3xl">
+        <h1 class="text-3xl font-bold mb-6 text-primary">Qwen2.5-VL Assistant</h1>
+
+        <form id="qa-form" onsubmit="event.preventDefault(); fetchStream();" class="space-y-4" enctype="multipart/form-data">
+            <div>
+                <label class="block text-sm font-medium mb-1">Prompt</label>
+                <input type="text" name="question" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">Upload Image (optional)</label>
+                <input type="file" name="image" class="w-full">
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <input type="checkbox" name="search" id="search-toggle" class="h-4 w-4 text-primary border-gray-300 rounded">
+                <label for="search-toggle" class="text-sm">Enable Web Search</label>
+            </div>
+
+            <button type="submit" id="submit-button"
+                class="bg-primary text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-800 transition">
+                Ask
+            </button>
+        </form>
+
+        <div id="response-section" class="mt-6">
+            <h2 class="text-xl font-semibold mb-2 text-primary">Response</h2>
+            <pre id="output" class="bg-gray-100 p-4 rounded-lg h-64 overflow-y-auto whitespace-pre-wrap font-mono text-sm"></pre>
+        </div>
+    </div>
+
+    <script>
+        async function fetchStream() {
+            const form = document.getElementById("qa-form");
+            const formData = new FormData(form);
+            const response = await fetch("/", {
+                method: "POST",
+                body: formData
+            });
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            const output = document.getElementById("output");
+            const button = document.getElementById("submit-button");
+            output.innerText = "";
+            button.disabled = true;
+            button.innerText = "Loading...";
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                output.innerText += decoder.decode(value);
+                output.scrollTop = output.scrollHeight;
+            }
+
+            button.disabled = false;
+            button.innerText = "Ask";
+        }
+    </script>
+
+</body>
+</html>
