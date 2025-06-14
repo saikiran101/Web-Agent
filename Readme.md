@@ -1,5 +1,7 @@
 Vision-Language Web Agent 🤖✨
 This project is a simple yet powerful multimodal web application built with Flask. It provides a web interface to interact with a vision-language model (qwen2.5vl:7b) running locally via Ollama. The agent can answer questions based on text input, analyze uploaded images, and optionally perform a live web search using the Serper API to provide up-to-date, context-aware responses.
+![image](https://github.com/user-attachments/assets/a5740498-537d-45d8-8f8d-effa83b9d5b7)
+
 
 ## Features
 Multimodal Input: Ask questions using text and/or by uploading an image.
